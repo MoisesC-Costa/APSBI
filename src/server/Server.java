@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.FileLockInterruptionException;
 import java.util.Scanner;
 
 import server.functions.Function;
@@ -21,10 +22,11 @@ public class Server {
 			@Override
 			public void run() {
 				
-				while(true) {
+				while(RunningFunction.getState()) {
 					Socket cliente = acceptClient(server);
 					Thread session = new Thread(new Session(cliente));
 					session.start();
+					
 				}
 				
 			}
@@ -34,7 +36,7 @@ public class Server {
 		Thread serverRunner = new Thread(runner);
 		serverRunner.start();
 		
-		while (serverRunner.isAlive()) {
+		while (RunningFunction.getState()) {
 			String functionName = scanner.nextLine();
 			String className = "server.functions." + functionName;
 			
@@ -55,6 +57,8 @@ public class Server {
 		}
 		
 		scanner.close();
+		serverRunner.interrupt();
+		log("" + serverRunner.isAlive());
 		log("Servidor Desligado!");
 		
 	}

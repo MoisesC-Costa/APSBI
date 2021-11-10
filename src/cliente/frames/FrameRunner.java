@@ -1,7 +1,7 @@
 package cliente.frames;
 
 import java.util.Scanner;
-
+import java.awt.EventQueue;
 
 public class FrameRunner {
 	
@@ -11,7 +11,7 @@ public class FrameRunner {
 		while(scanner.hasNext()) {
 			String frameName = scanner.nextLine();
 			String className = "cliente.frames." + frameName;
-			new Thread(runnerFactory(className)).start();
+			new Thread(runnerFactory(className)).start();;
 			
 		}
 		

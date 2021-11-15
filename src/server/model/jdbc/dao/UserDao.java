@@ -6,11 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import server.model.bean.User;
+import server.model.exceptions.UserNotFoundException;
 import server.model.jdbc.ConnectionFactory;
 
 
 public class UserDao {
-	final private SQLException userNotFound = new SQLException("Usuario não encontrado");
+	final private UserNotFoundException userNotFound = new UserNotFoundException();
 	
 	Connection connection;
 
@@ -41,7 +42,7 @@ public class UserDao {
 	}
 	
 	// Retrive
-	public User getUser(User user) {
+	public User getUser(User user) throws UserNotFoundException {
 		String sql = "select * from user where id = ?;";
 		
 		try (
@@ -72,7 +73,7 @@ public class UserDao {
 		
 	}
 	
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username) throws UserNotFoundException {
 		String sql = "select * from user where username = ?";
 		
 		try (

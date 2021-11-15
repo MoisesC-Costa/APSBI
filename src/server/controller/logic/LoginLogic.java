@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import server.factory.SecureTokenFactory;
 import server.model.bean.User;
 import server.model.jdbc.dao.UserDao;
+import server.model.jdbc.factory.UserFactory;
 import server.session.Session;
 
 public class LoginLogic implements Logic{
@@ -20,14 +21,14 @@ public class LoginLogic implements Logic{
 		user.setPassword(packet.getString("password"));
 		
 		// Recuperando o usuari do banco de dados
-		User another = dao.getUserByUsername(user.getUsername());
 		
+		User another = UserFactory.getUserByUsername(dao, packet.getString("username"));
 		
 		// Comparando e vendo se os dados dão match
 		if (user.equals(another)) {
 			System.out.println("Usuario autenticado!");
 
-			response.put("code", 1);
+			response.put("code", true);
 			response.put("token", SecureTokenFactory.getUserToken());
 			
 			session.response(response);
@@ -35,9 +36,10 @@ public class LoginLogic implements Logic{
 		} else {
 			System.out.println("Usuario não Autenticado!");
 
-			response.put("code", 0);
+			response.put("code", false);
 			response.put("description", "Usuario ou Senha invalidos");
 			
+			session.response(response);
 		}
 		
 	}

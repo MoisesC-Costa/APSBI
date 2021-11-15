@@ -9,11 +9,11 @@ public class SecureTokenFactory {
 	// Factory para criar nossos tokens
 	public static String getUserToken() {
 		
-		char buf[] = new char[256];
+		char buf[] = new char[18];
 		
 		SecureRandom rng = new SecureRandom();
 		
-		for (int i = 0 ; i < 256 ; i++) {
+		for (int i = 0 ; i < 18 ; i++) {
 			buf[i] = chars.charAt(rng.nextInt(size));
 		}
 		

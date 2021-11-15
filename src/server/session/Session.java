@@ -36,7 +36,15 @@ public class Session implements Runnable{
 	}
 	
 	public void request(JSONObject packet) {
-		Controller.execLogic(packet, this);
+		
+		try {
+			Controller.execLogic(packet, this);
+
+		} catch (Exception e) {
+			JSONObject erroPacket = new JSONObject("{'code':0, 'description':'GenericErro'}");
+			response(erroPacket);
+			
+		}
 	}
 	
 	public void response(JSONObject packet) {

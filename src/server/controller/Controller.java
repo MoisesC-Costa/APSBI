@@ -13,7 +13,7 @@ public class Controller {
 		String logicName = packet.getString("logic");
 		String className = "server.controller.logic." + logicName;
 		
-		System.out.println("Executando Logica" + logicName);
+		System.out.println("Executando Logica: " + logicName);
 		try {
 			Class<?> cls = Class.forName(className);
 			Logic logic = (Logic) cls.getConstructor().newInstance();

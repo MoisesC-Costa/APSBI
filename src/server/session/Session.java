@@ -2,6 +2,8 @@ package server.session;
 
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Scanner;
 
 import org.json.JSONObject;
@@ -9,9 +11,12 @@ import org.json.JSONObject;
 import server.controller.Controller;
 
 public class Session implements Runnable{
+	public static Set<String> sessionTokens = new HashSet<>();
 	
 	private PrintStream out;
 	private Scanner scanner;
+	private String token;
+	private boolean authenticated = false;
 	
 	public Session(Socket cliente) {
 		this.out = CommunicationFactory.getPrintStream(cliente);
@@ -24,8 +29,9 @@ public class Session implements Runnable{
 		while (scanner.hasNext()) {
 			JSONObject packet = new JSONObject(scanner.nextLine());
 			this.request(packet);
-			
 		}
+		
+		sessionTokens.remove(token);
 		
 	}
 	
@@ -34,9 +40,20 @@ public class Session implements Runnable{
 	}
 	
 	public void response(JSONObject packet) {
-		out.println(packet.toString());
 		
-	}
-		
+		if (authenticated) {
+			out.println(packet.toString());
+
+		} else {
+			System.out.println("Usuario ainda não autenticado");
+			
+			token = packet.getString("token");
+			sessionTokens.add(token);
+			out.println(packet.toString());
+
+			authenticated = true;
+		}
+
+	}	
 		
 }

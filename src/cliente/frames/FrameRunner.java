@@ -1,7 +1,6 @@
 package cliente.frames;
 
 import java.util.Scanner;
-import java.awt.EventQueue;
 
 public class FrameRunner {
 	

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -15,7 +16,8 @@ import javax.swing.UIManager;
 import org.json.JSONObject;
 
 import cliente.boundary.Boundary;
-import javax.swing.JLabel;
+import cliente.frames.MainApp;
+import cliente.frames.tools.SwitchComponents;
 
 public class Cliente {
 	
@@ -55,11 +57,13 @@ public class Cliente {
 		app.setSize(500, 350);
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		app.getContentPane().setLayout(null);
+		app.setResizable(false);
 		
 		JPanel signupPanel = new JPanel();
 		signupPanel.setLayout(null);
 		signupPanel.setBounds(0, 0, 484, 311);
 		app.getContentPane().add(signupPanel);
+		signupPanel.setVisible(false);
 		
 		userSignupField = new JTextField();
 		userSignupField.setBounds(142, 114, 200, 20);
@@ -79,9 +83,29 @@ public class Cliente {
 		repassSignField.setBounds(142, 207, 200, 20);
 		signupPanel.add(repassSignField);
 		
-		JButton EnviarForm = new JButton("Enviar");
-		EnviarForm.setBounds(142, 238, 63, 23);
-		signupPanel.add(EnviarForm);
+		JButton sendForm = new JButton("Enviar");
+		sendForm.setBounds(142, 238, 63, 23);
+		signupPanel.add(sendForm);
+		
+		JLabel usernameLabel = new JLabel("Username");
+		usernameLabel.setBounds(69, 117, 54, 14);
+		signupPanel.add(usernameLabel);
+		
+		JLabel emailLabel = new JLabel("E-Mail");
+		emailLabel.setBounds(69, 148, 46, 14);
+		signupPanel.add(emailLabel);
+		
+		JLabel passwordLabel = new JLabel("Password");
+		passwordLabel.setBounds(69, 179, 46, 14);
+		signupPanel.add(passwordLabel);
+		
+		JLabel repasswordLabel = new JLabel("Repassword");
+		repasswordLabel.setBounds(69, 210, 63, 14);
+		signupPanel.add(repasswordLabel);
+		
+		JButton back = new JButton("Voltar");
+		back.setBounds(279, 238, 63, 23);
+		signupPanel.add(back);
 		
 		JPanel loginPanel = new JPanel();
 		loginPanel.setBounds(0, 0, 484, 311);
@@ -108,7 +132,7 @@ public class Cliente {
 		
 		JRadioButton showPassword = new JRadioButton("show");
 		showPassword.setBounds(348, 190, 109, 23);
-		showPassword.addActionListener(new ShowPassword());
+		showPassword.addActionListener(new ShowPassword(passLoginField));
 		loginPanel.add(showPassword);
 		
 		JLabel userLoginLabel = new JLabel("Username");
@@ -118,24 +142,41 @@ public class Cliente {
 		JLabel passLoginLabel = new JLabel("Password");
 		passLoginLabel.setBounds(78, 194, 46, 14);
 		loginPanel.add(passLoginLabel);
+
+		JRadioButton showpass2 = new JRadioButton("show");
+		showpass2.setBounds(348, 175, 109, 23);
+		signupPanel.add(showpass2);
+		showpass2.addActionListener(new ShowPassword(passSignField));
+
+		SwitchComponents switchComponents = new SwitchComponents(loginPanel);
+		
+		singup.addActionListener(new ChangePanel(signupPanel, switchComponents));
+		back.addActionListener(new ChangePanel(loginPanel, switchComponents));
+		
 		
 	}
 	
 	// Observadores
 	
 	private class ShowPassword implements ActionListener {
+		private JPasswordField field;
+		
+		public ShowPassword(JPasswordField field) {
+			this.field = field;
 
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JRadioButton button = (JRadioButton) e.getSource();
 			
 			if (button.isSelected()) {
-				passLoginField.setEchoChar((char) 0);
+				field.setEchoChar((char) 0);
 				
 			}
 			
 			else {
-				passLoginField.setEchoChar('*');
+				field.setEchoChar('*');
 				
 			}
 			
@@ -143,26 +184,80 @@ public class Cliente {
 		
 	}
 	
-	private class ActLogin implements ActionListener {
+	private class ChangePanel implements ActionListener {
+		private JPanel panel;
+		private SwitchComponents switchComponets;
+		
+		public ChangePanel(JPanel panel, SwitchComponents switchComponets) {
+			this.panel = panel;
+			this.switchComponets = switchComponets;
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JSONObject message = new JSONObject();
-			message.put("logic", "LoginLogic");
-			message.put("username", userLoginField.getText());
-			message.put("password", new String(passLoginField.getPassword()));
-			
-			JSONObject response = boundary.request(message);
-			
-			if (response.getBoolean("code")) {
-				System.out.println(response.getString("token"));
+			switchComponets.updateViwer(panel);
+		}
+	
+		
+	}
+	
+	private class ActLogin implements ActionListener {
 
-			} else {
-				System.out.println(response.getString("description"));
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			JSONObject message = new JSONObject();
+
+			try {
+				String username = checkAndReturnUsername(userLoginField);
+				String password = checkAndReturnPassword(passLoginField);
+
+				message.put("logic", "LoginLogic");
+				message.put("username", username);
+				message.put("password", password);
+				
+				JSONObject response = boundary.request(message);
+				
+				app.dispose();
+				new MainApp(boundary, response.getString("token"));
+				
+			} catch(IllegalArgumentException e) {
 				
 			}
 			
 		}
 		
+	}
+
+	// Tratar os dados para não haver problemas no servidor
+
+	private String checkAndReturnUsername(JTextField username) 
+			throws IllegalArgumentException {
+		String value = username.getText();
+		
+		if (value.isBlank()) {
+			throw new IllegalArgumentException();
+			
+		} else if (value.length() > 15) {
+			throw new IllegalArgumentException();
+			
+		}
+		
+		return value;
+	}
+
+	private String checkAndReturnPassword(JPasswordField password) 
+			throws IllegalArgumentException {
+		
+		String value = new String(password.getPassword());
+
+		if (value.isBlank()) {
+			throw new IllegalArgumentException();
+
+		} else if (value.length() < 8) {
+			throw new IllegalArgumentException();
+
+		}
+
+		return value;
 	}
 }

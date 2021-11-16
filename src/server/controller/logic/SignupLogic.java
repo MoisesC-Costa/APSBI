@@ -27,14 +27,14 @@ public class SignupLogic implements Logic{
 			dao.createUser(user);
 			String token = SecureTokenFactory.getUserToken();
 			
-			message.put("code", 1);
+			message.put("code", true);
 			message.put("token", token);
 			
 			session.setToken(token);
 			session.response(message);
 			
 		} catch(Exception e) {
-			session.response(new JSONObject("{'code':0, 'description':'Valores repetidos'}"));
+			session.response(new JSONObject("{'code':false, 'description':'Valores repetidos'}"));
 			
 		}
 		

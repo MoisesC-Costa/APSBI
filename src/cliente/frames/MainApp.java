@@ -17,10 +17,10 @@ public class MainApp {
 	private String token;
 	
 	private JFrame frame;
-	private JButton editarUsuario;
 	private JButton etl;
 	private JButton graficos;
 	private JButton home;
+	private JPanel contentPanel;
 	
 	public MainApp(Boundary boundary, String token) {
 		this.boundary = boundary;
@@ -34,22 +34,15 @@ public class MainApp {
 		frame.setSize(500, 350);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
-		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		frame.getContentPane().setLayout(null);
+		frame.setLocationRelativeTo(null);
 		
 		JPanel optionsPanel = new JPanel();
+		optionsPanel.setBounds(0, 0, 484, 34);
 		optionsPanel.setBackground(Color.LIGHT_GRAY);
 		optionsPanel.setPreferredSize(new Dimension(0, 34));
 		optionsPanel.setLayout(null);
-		frame.getContentPane().add(optionsPanel, BorderLayout.NORTH);
-		
-		editarUsuario = new JButton();
-		editarUsuario.setBounds(440, 1, 32, 32);
-		editarUsuario.setFocusPainted(false);
-		editarUsuario.setBorderPainted(false);
-		editarUsuario.setOpaque(false);
-		ImageIcon editarIcon = new ImageIcon("img/engrenagem.png");
-		editarUsuario.setIcon(editarIcon);
-		optionsPanel.add(editarUsuario);
+		frame.getContentPane().add(optionsPanel);
 		
 		etl = new JButton();
 		etl.setOpaque(false);
@@ -77,6 +70,13 @@ public class MainApp {
 		ImageIcon homeIcon = new ImageIcon("img/home.png");
 		home.setIcon(homeIcon);
 		optionsPanel.add(home);
+		
+		contentPanel = new JPanel();
+		contentPanel.setBounds(0, 34, 484, 277);
+		frame.getContentPane().add(contentPanel);
+		contentPanel.setLayout(new BorderLayout(0, 0));
 	}
 
+	// Observadores
+		
 }

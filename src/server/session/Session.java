@@ -40,7 +40,7 @@ public class Session implements Runnable{
 			Controller.execLogic(packet, this);
 
 		} catch (Exception e) {
-			JSONObject erroPacket = new JSONObject("{'code':0, 'description':'GenericErro'}");
+			JSONObject erroPacket = new JSONObject("{'code':false, 'description':'GenericErro'}");
 			response(erroPacket);
 			
 		}

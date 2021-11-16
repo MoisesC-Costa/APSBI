@@ -15,33 +15,40 @@ public class LoginLogic implements Logic{
 		JSONObject response = new JSONObject();
 		UserDao dao = new UserDao();
 
-		// Recuperando o usuario da requisição
-		User user = new User();
-		user.setUsername(packet.getString("username"));
-		user.setPassword(packet.getString("password"));
-		
-		// Recuperando o usuari do banco de dados
-		
-		User another = UserFactory.getUserByUsername(dao, packet.getString("username"));
-		
-		// Comparando e vendo se os dados dão match
-		if (user.equals(another)) {
-			System.out.println("Usuario autenticado!");
+		if (session.getToken() == null) {
 
-			response.put("code", true);
-			response.put("token", SecureTokenFactory.getUserToken());
+			// Recuperando o usuario da requisição
+			User user = new User();
+			user.setUsername(packet.getString("username"));
+			user.setPassword(packet.getString("password"));
+
+			// Recuperando o usuari do banco de dados
+
+			User another = UserFactory.getUserByUsername(dao, packet.getString("username"));
+
+			// Comparando e vendo se os dados dão match
+			if (user.equals(another)) {
+				System.out.println("Usuario autenticado!");
+
+				response.put("code", true);
+				response.put("token", SecureTokenFactory.getUserToken());
+
+				session.response(response);
+
+			} else {
+				System.out.println("Usuario não Autenticado!");
+
+				response.put("code", false);
+				response.put("description", "Usuario ou Senha invalidos");
+
+				session.response(response);
+			}
 			
-			session.response(response);
-
 		} else {
-			System.out.println("Usuario não Autenticado!");
+			throw new RuntimeException();
 
-			response.put("code", false);
-			response.put("description", "Usuario ou Senha invalidos");
-			
-			session.response(response);
 		}
-		
+
 	}
 
 }

@@ -1,7 +1,6 @@
 package cliente.frames.tools;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 // Classe para ficar mudando os componentes que estão sobrespostos;
 public class SwitchComponents {

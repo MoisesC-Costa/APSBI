@@ -34,6 +34,7 @@ public class Server {
 		
 		Thread serverRunner = new Thread(runner);
 		serverRunner.start();
+		log("Comunicação Aberta");
 		
 		while (serverRunner.isAlive()) {
 			String functionName = scanner.nextLine();

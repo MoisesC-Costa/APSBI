@@ -16,7 +16,6 @@ public class Session implements Runnable{
 	private PrintStream out;
 	private Scanner scanner;
 	private String token;
-	private boolean authenticated = false;
 	
 	public Session(Socket cliente) {
 		this.out = CommunicationFactory.getPrintStream(cliente);
@@ -47,21 +46,17 @@ public class Session implements Runnable{
 		}
 	}
 	
-	public void response(JSONObject packet) {
-		
-		if (authenticated) {
+	public void response(JSONObject packet) {		
 			out.println(packet.toString());
+	}
 
-		} else {
-			System.out.println("Usuario ainda não autenticado");
-			
-			token = packet.getString("token");
-			sessionTokens.add(token);
-			out.println(packet.toString());
-
-			authenticated = true;
-		}
-
-	}	
+	public void setToken(String token) {
+		this.token = token;
+		sessionTokens.add(token);
+	}
+	
+	public String getToken() {
+		return this.token;
+	}
 		
 }

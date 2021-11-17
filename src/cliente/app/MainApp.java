@@ -2,13 +2,18 @@ package cliente.app;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cliente.app.listeners.SwitchComponentListener;
 import cliente.app.tools.SwitchComponents;
@@ -70,6 +75,28 @@ public class MainApp {
 		frame.getContentPane().add(conteudoPanel);
 		conteudoPanel.setLayout(null);
 		
+		JPanel etlPanel = new JPanel();
+		etlPanel.setBounds(0, 0, 484, 277);
+		conteudoPanel.add(etlPanel);
+		etlPanel.setLayout(null);
+		etlPanel.setVisible(false);
+		
+		JTabbedPane etlPage = new JTabbedPane(JTabbedPane.TOP);
+		etlPage.setBounds(0, 0, 484, 277);
+		etlPanel.add(etlPage);
+		
+		JPanel panel = new JPanel();
+		etlPage.addTab("DBQueimadas", null, panel, null);
+		panel.setLayout(null);
+		
+		JButton uploadForm = new JButton();
+		uploadForm.setBounds(189, 74, 100, 100);
+		uploadForm.setIcon(new ImageIcon("img\\form.png"));
+		uploadForm.setFocusPainted(false);
+		uploadForm.setBorderPainted(false);
+		uploadForm.addActionListener(new UploadFormDBQueimadas());
+		panel.add(uploadForm);
+		
 		JPanel homePanel = new JPanel();
 		homePanel.setBounds(0, 0, 484, 277);
 		conteudoPanel.add(homePanel);
@@ -82,19 +109,6 @@ public class MainApp {
 		JLabel email = new JLabel("New label");
 		email.setBounds(10, 36, 46, 14);
 		homePanel.add(email);
-		
-		JPanel etlPanel = new JPanel();
-		etlPanel.setBounds(0, 0, 484, 277);
-		conteudoPanel.add(etlPanel);
-		etlPanel.setLayout(null);
-		etlPanel.setVisible(false);
-		
-		JTabbedPane etlPage = new JTabbedPane(JTabbedPane.TOP);
-		etlPage.setBounds(0, 0, 484, 277);
-		etlPanel.add(etlPage);
-		
-		JPanel panel = new JPanel();
-		etlPage.addTab("New tab", null, panel, null);
 		
 		JPanel graficosPanel = new JPanel();
 		graficosPanel.setBounds(0, 0, 484, 277);
@@ -118,9 +132,36 @@ public class MainApp {
 		SwitchComponents switcher = new SwitchComponents(homePanel);
 		
 		home.addActionListener(new SwitchComponentListener(homePanel, switcher));
-		etl.addActionListener(new SwitchComponentListener(etlPanel, switcher));
 		graficos.addActionListener(new SwitchComponentListener(graficosPanel, switcher));
+		etl.addActionListener(new SwitchComponentListener(etlPanel, switcher));
 
 		
 	}
+
+	// Observadores
+	
+	private class UploadFormDBQueimadas implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			
+			// Criando o pick chooser
+			JFileChooser chooser = new JFileChooser(new File(System.getProperty("user.dir")));
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("DBQueimadas(csv)", "csv");
+			chooser.setFileFilter(filter);
+			
+			// abrindo a interface
+			int returnVal = chooser.showOpenDialog(null);
+			
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				System.out.println(chooser.getSelectedFile().getAbsolutePath());
+
+			} else {
+				System.out.println("Implementar Dialog aqui");
+				
+			}
+		}
+		
+	}
+	
 }

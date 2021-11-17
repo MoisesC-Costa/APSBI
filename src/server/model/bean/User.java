@@ -2,8 +2,8 @@ package server.model.bean;
 
 public class User{
 
-	private long id;
-	private String username;
+	private int id;
+	private String nome;
 	private String password;
 	private String email;
 	
@@ -11,26 +11,26 @@ public class User{
 	
 	public User(User user) {
 		this.id = user.getId();
-		this.username = user.getUsername();
+		this.nome = user.getNome();
 		this.password = user.getPassword();
 		this.email = user.getEmail();
 		
 	}
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 	
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	
-	public String getUsername() {
-		return username;
+	public String getNome() {
+		return nome;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
+	public void setNome(String Nome) {
+		this.nome = Nome;
 	}
 	
 	public String getPassword() {
@@ -53,7 +53,7 @@ public class User{
 	public boolean equals(Object o) {
 		User another = (User) o;
 		
-		if (another.getUsername().equals(username) 
+		if (another.getEmail().equals(email) 
 				&& another.getPassword().equals(password)) {
 				return true;			
 

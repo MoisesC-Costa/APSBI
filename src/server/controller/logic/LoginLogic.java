@@ -19,12 +19,12 @@ public class LoginLogic implements Logic{
 
 			// Recuperando o usuario da requisição
 			User user = new User();
-			user.setUsername(packet.getString("username"));
+			user.setEmail(packet.getString("email"));
 			user.setPassword(packet.getString("password"));
 
 			// Recuperando o usuari do banco de dados
 
-			User another = UserFactory.getUserByUsername(dao, packet.getString("username"));
+			User another = UserFactory.getUser(dao, packet.getString("email"));
 
 			// Comparando e vendo se os dados dão match
 			if (user.equals(another)) {

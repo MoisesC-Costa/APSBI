@@ -15,11 +15,11 @@ public class SignupLogic implements Logic{
 		UserDao dao = new UserDao();
 		JSONObject message = new JSONObject();
 		
-		String username = packet.getString("username");
+		String nome = packet.getString("nome");
 		String password = packet.getString("password");
 		String email = packet.getString("email");
 		
-		user.setUsername(username);
+		user.setNome(nome);
 		user.setPassword(password);
 		user.setEmail(email);
 		

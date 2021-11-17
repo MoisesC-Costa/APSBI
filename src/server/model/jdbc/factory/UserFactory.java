@@ -6,18 +6,14 @@ import server.model.jdbc.dao.UserDao;
 
 public class UserFactory {
 
-	public static User getUserByUsername(UserDao dao, String username) {
+	public static User getUser(UserDao dao, String email) {
 		try {
-			return dao.getUserByUsername(username);	
-
+			return dao.getUser(email);
 		} catch (UserNotFoundException e) {
-			User user = new User();
-			user.setUsername("");
-			user.setPassword("");
-			
-			return user;
+			throw new RuntimeException(e);
+
 		}
-		
+
 	}
-	
+
 }

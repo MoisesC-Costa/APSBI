@@ -24,7 +24,7 @@ public class Cliente {
 
 	private Boundary boundary;
 	private JFrame app;
-	private JTextField userLoginField;
+	private JTextField emailLoginField;
 	private JPasswordField passLoginField;
 	private JTextField emailSignupField;
 	private JTextField userSignupField;
@@ -50,9 +50,7 @@ public class Cliente {
 		boundary = new Boundary();
 	}
 
-
-	// Estrutura
-
+	// Estrutura da Interface
 	private void initialize() {
 		app = new JFrame("Angra");
 		app.setSize(500, 350);
@@ -60,16 +58,16 @@ public class Cliente {
 		app.getContentPane().setLayout(null);
 		app.setResizable(false);
 		app.setLocationRelativeTo(null);
-		
+
 		JPanel loginPanel = new JPanel();
 		loginPanel.setBounds(0, 0, 484, 311);
 		app.getContentPane().add(loginPanel);
 		loginPanel.setLayout(null);
 
-		userLoginField = new JTextField();
-		userLoginField.setBounds(142, 145, 200, 20);
-		loginPanel.add(userLoginField);
-		userLoginField.setColumns(10);
+		emailLoginField = new JTextField();
+		emailLoginField.setBounds(142, 145, 200, 20);
+		loginPanel.add(emailLoginField);
+		emailLoginField.setColumns(10);
 
 		passLoginField = new JPasswordField();
 		passLoginField.setBounds(142, 176, 200, 20);
@@ -89,9 +87,9 @@ public class Cliente {
 		showPassword.addActionListener(new ShowPassword(passLoginField));
 		loginPanel.add(showPassword);
 
-		JLabel userLoginLabel = new JLabel("Username");
-		userLoginLabel.setBounds(78, 148, 54, 14);
-		loginPanel.add(userLoginLabel);
+		JLabel emailLoginLabel = new JLabel("E-Mail");
+		emailLoginLabel.setBounds(78, 148, 54, 14);
+		loginPanel.add(emailLoginLabel);
 
 		JLabel passLoginLabel = new JLabel("Password");
 		passLoginLabel.setBounds(78, 179, 46, 14);
@@ -106,46 +104,46 @@ public class Cliente {
 		signupPanel.setVisible(false);
 
 		userSignupField = new JTextField();
-		userSignupField.setBounds(142, 114, 200, 20);
+		userSignupField.setBounds(142, 83, 200, 20);
 		signupPanel.add(userSignupField);
 		userSignupField.setColumns(10);
 
 		emailSignupField = new JTextField();
-		emailSignupField.setBounds(142, 145, 200, 20);
+		emailSignupField.setBounds(142, 114, 200, 20);
 		signupPanel.add(emailSignupField);
 		emailSignupField.setColumns(10);
 
 		passSignField = new JPasswordField();
-		passSignField.setBounds(142, 176, 200, 20);
+		passSignField.setBounds(142, 145, 200, 20);
 		signupPanel.add(passSignField);
 
 		repassSignField = new JPasswordField();
-		repassSignField.setBounds(142, 207, 200, 20);
+		repassSignField.setBounds(142, 176, 200, 20);
 		signupPanel.add(repassSignField);
 
 		JButton sendForm = new JButton("Enviar");
-		sendForm.setBounds(142, 238, 63, 23);
+		sendForm.setBounds(142, 207, 63, 23);
 		sendForm.addActionListener(new ActSignup());
 		signupPanel.add(sendForm);
 
-		JLabel usernameLabel = new JLabel("Username");
-		usernameLabel.setBounds(69, 117, 54, 14);
-		signupPanel.add(usernameLabel);
+		JLabel nomeLabel = new JLabel("Nome");
+		nomeLabel.setBounds(69, 86, 54, 14);
+		signupPanel.add(nomeLabel);
 
 		JLabel emailLabel = new JLabel("E-Mail");
-		emailLabel.setBounds(69, 148, 46, 14);
+		emailLabel.setBounds(69, 117, 46, 14);
 		signupPanel.add(emailLabel);
 
 		JLabel passwordLabel = new JLabel("Password");
-		passwordLabel.setBounds(69, 179, 46, 14);
+		passwordLabel.setBounds(69, 148, 46, 14);
 		signupPanel.add(passwordLabel);
 
 		JLabel repasswordLabel = new JLabel("Repassword");
-		repasswordLabel.setBounds(69, 210, 63, 14);
+		repasswordLabel.setBounds(69, 179, 63, 14);
 		signupPanel.add(repasswordLabel);
 
 		JButton back = new JButton("Voltar");
-		back.setBounds(279, 238, 63, 23);
+		back.setBounds(279, 207, 63, 23);
 		signupPanel.add(back);
 
 		JRadioButton showpass2 = new JRadioButton("show");
@@ -153,6 +151,7 @@ public class Cliente {
 		signupPanel.add(showpass2);
 		showpass2.addActionListener(new ShowPassword(passSignField));
 		showpass2.addActionListener(new ShowPassword(repassSignField));
+
 		singup.addActionListener(new SwitchComponentListener(signupPanel, switchComponents));
 		back.addActionListener(new SwitchComponentListener(loginPanel, switchComponents));
 
@@ -188,7 +187,6 @@ public class Cliente {
 
 	}
 
-
 	private class ActLogin implements ActionListener {
 
 		@Override
@@ -196,24 +194,24 @@ public class Cliente {
 			JSONObject message = new JSONObject();
 
 			try {
-				String username = checkReturnUsername(userLoginField);
+				String email = checkReturnEmail(emailLoginField);
 				String password = checkReturnPassword(passLoginField);
 
 				message.put("logic", "LoginLogic");
-				message.put("username", username);
+				message.put("email", email);
 				message.put("password", password);
 
 				JSONObject response = boundary.request(message);
-				
+
 				if (response.getBoolean("code")) {
 					app.dispose();
 					new MainApp(boundary, response.getString("token"));
 
 				} else {
-					System.out.println("Colocar um Dialog aqui");
-					
+					System.out.println("Dialog" + response.getString("description"));
+
 				}
-				
+
 
 			} catch(IllegalArgumentException e) {
 
@@ -222,7 +220,7 @@ public class Cliente {
 		}
 
 	}
-
+	
 	private class ActSignup implements ActionListener {
 
 		@Override
@@ -231,11 +229,11 @@ public class Cliente {
 			message.put("logic", "SignupLogic");
 
 			try {
-				String username = checkReturnUsername(userSignupField);
+//				String username = checkReturnUsername(userSignupField);
 				String password = checkCompareReturnPassword(passSignField, repassSignField);
 				String email = checkReturnEmail(emailSignupField);
 
-				message.put("username", username);
+//				message.put("username", username);
 				message.put("password", password);
 				message.put("email", email);
 
@@ -249,7 +247,7 @@ public class Cliente {
 
 				} else {
 					System.out.print("Colocar um dialog aqui");
-					
+
 				}
 
 			} catch (IllegalArgumentException e) {
@@ -262,20 +260,6 @@ public class Cliente {
 
 	// Tratar os dados para não haver problemas no servidor
 
-	private String checkReturnUsername(JTextField username) 
-			throws IllegalArgumentException {
-		String value = username.getText();
-
-		if (value.isBlank()) {
-			throw new IllegalArgumentException();
-
-		} else if (value.length() > 15) {
-			throw new IllegalArgumentException();
-
-		}
-
-		return value;
-	}
 
 	private String checkReturnEmail(JTextField email) 
 			throws IllegalArgumentException {
@@ -311,7 +295,7 @@ public class Cliente {
 		if (value.isBlank()) {
 			throw new IllegalArgumentException();
 
-		} else if (value.length() < 8) {
+		} else if (value.length() < 4) {
 			throw new IllegalArgumentException();
 
 		}
@@ -336,7 +320,7 @@ public class Cliente {
 					forPerformed = false;
 					break;
 				}
-				
+
 			}
 
 			if (forPerformed) {

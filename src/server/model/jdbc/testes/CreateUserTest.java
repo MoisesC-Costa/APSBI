@@ -8,9 +8,9 @@ public class CreateUserTest {
 		User user = new User();
 		UserDao dao = new UserDao();
 		
-		user.setUsername("moises");
-		user.setPassword("senha");
-		user.setEmail("sesiom.br@gmail.com");
+		user.setNome("Moises Costa Caldas");
+		user.setPassword("sesiom.br@gmail.com");
+		user.setEmail("senha");
 		
 		dao.createUser(user);
 	}

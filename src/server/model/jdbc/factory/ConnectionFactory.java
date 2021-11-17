@@ -1,4 +1,4 @@
-package server.model.jdbc;
+package server.model.jdbc.factory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

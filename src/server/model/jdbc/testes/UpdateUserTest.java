@@ -9,7 +9,7 @@ public class UpdateUserTest {
 		UserDao dao = new UserDao();
 		
 		user.setId(1);
-		user.setUsername("maylane");
+		user.setNome("Maylane Maximo");
 		user.setPassword("fofa");
 		user.setEmail("email@email.com");
 		

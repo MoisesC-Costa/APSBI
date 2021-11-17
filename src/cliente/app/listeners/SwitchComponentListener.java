@@ -1,11 +1,11 @@
-package cliente.frames.listeners;
+package cliente.app.listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 
-import cliente.frames.tools.SwitchComponents;
+import cliente.app.tools.SwitchComponents;
 
 public class SwitchComponentListener implements ActionListener {
 	private JComponent component;

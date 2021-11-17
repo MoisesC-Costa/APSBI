@@ -15,10 +15,10 @@ import javax.swing.UIManager;
 
 import org.json.JSONObject;
 
+import cliente.app.MainApp;
+import cliente.app.listeners.SwitchComponentListener;
+import cliente.app.tools.SwitchComponents;
 import cliente.boundary.Boundary;
-import cliente.frames.MainApp;
-import cliente.frames.listeners.SwitchComponentListener;
-import cliente.frames.tools.SwitchComponents;
 
 public class Cliente {
 
@@ -204,9 +204,16 @@ public class Cliente {
 				message.put("password", password);
 
 				JSONObject response = boundary.request(message);
+				
+				if (response.getBoolean("code")) {
+					app.dispose();
+					new MainApp(boundary, response.getString("token"));
 
-				app.dispose();
-				new MainApp(boundary, response.getString("token"));
+				} else {
+					System.out.println("Colocar um Dialog aqui");
+					
+				}
+				
 
 			} catch(IllegalArgumentException e) {
 
@@ -240,6 +247,9 @@ public class Cliente {
 					app.dispose();
 					new MainApp(boundary, token);
 
+				} else {
+					System.out.print("Colocar um dialog aqui");
+					
 				}
 
 			} catch (IllegalArgumentException e) {
@@ -322,12 +332,11 @@ public class Cliente {
 
 		} else {
 			for (int i = 0 ; i < pass1.length ; i++) {
-				if (pass1[i] == pass2[i]) {
-					// Gambiarra para tentar mais desempenho;
-				} else {
+				if (pass1[i] != pass2[i]) {
 					forPerformed = false;
 					break;
 				}
+				
 			}
 
 			if (forPerformed) {

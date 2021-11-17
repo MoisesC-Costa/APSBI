@@ -1,4 +1,4 @@
-package cliente.frames.tools;
+package cliente.app.tools;
 
 import javax.swing.JComponent;
 

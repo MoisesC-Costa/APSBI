@@ -16,8 +16,8 @@ public class SignupLogic implements Logic{
 		JSONObject message = new JSONObject();
 		
 		String nome = packet.getString("nome");
-		String password = packet.getString("password");
 		String email = packet.getString("email");
+		String password = packet.getString("password");
 		
 		user.setNome(nome);
 		user.setPassword(password);

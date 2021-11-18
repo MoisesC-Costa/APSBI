@@ -41,6 +41,7 @@ public class Session implements Runnable{
 
 		} catch (Exception e) {
 			JSONObject erroPacket = new JSONObject("{'code':false, 'description':'GenericErro'}");
+			System.out.println(e.getMessage());
 			response(erroPacket);
 			
 		}
@@ -52,7 +53,8 @@ public class Session implements Runnable{
 
 	public void setToken(String token) {
 		this.token = token;
-		sessionTokens.add(token);
+		Session.sessionTokens.add(token);
+		System.out.print(Session.sessionTokens);
 	}
 	
 	public String getToken() {

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,9 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.opencsv.exceptions.CsvValidationException;
+
 import cliente.app.listeners.SwitchComponentListener;
 import cliente.app.tools.SwitchComponents;
 import cliente.boundary.Boundary;
+import cliente.tools.DataConveter;
 
 public class MainApp {
 
@@ -140,6 +147,7 @@ public class MainApp {
 
 	// Observadores
 	
+	// Enviar o formulario do DBQueimadas para o servidor
 	private class UploadFormDBQueimadas implements ActionListener {
 
 		@Override
@@ -154,12 +162,41 @@ public class MainApp {
 			int returnVal = chooser.showOpenDialog(null);
 			
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				System.out.println(chooser.getSelectedFile().getAbsolutePath());
-
-			} else {
-				System.out.println("Implementar Dialog aqui");
+				String path = chooser.getSelectedFile().getAbsolutePath();
 				
+				if (path.matches("(.*).csv")) {
+					JSONObject message = new JSONObject();
+					
+					
+					message.put("logic", "UploadDBQueimadasLogic");
+					message.put("token", token);
+					try {
+						message.put("csv", DataConveter.converterCSVToJSONObject(path));
+					
+					// BOTAR DIALOG
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+					JSONObject response = boundary.request(message);
+					
+					if (response.getBoolean("code")) {
+						
+					} else {
+						//BOTAR DIALOG
+						System.out.println(response.getString("description"));
+						
+					}
+					
+					
+				// BOTAR DIALOG	
+				} else {
+					System.out.println("Formato do arquivo invalido");
+					
+				}
+
 			}
+			
 		}
 		
 	}

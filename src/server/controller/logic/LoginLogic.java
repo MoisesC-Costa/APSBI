@@ -29,10 +29,12 @@ public class LoginLogic implements Logic{
 			// Comparando e vendo se os dados dão match
 			if (user.equals(another)) {
 				System.out.println("Usuario autenticado!");
-
+				String token = SecureTokenFactory.getUserToken();
+				
 				response.put("code", true);
-				response.put("token", SecureTokenFactory.getUserToken());
-
+				response.put("token", token);
+				
+				session.setToken(token);
 				session.response(response);
 
 			} else {

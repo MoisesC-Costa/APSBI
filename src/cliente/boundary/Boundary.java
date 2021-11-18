@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import org.json.JSONObject;
 
-
+// Classe para fazer a comunicação com o Servidor
 public class Boundary {
 	
 	private Socket connection;
@@ -24,7 +24,7 @@ public class Boundary {
 		connection = socketFactory(ip, port);
 	}
 
-	// Factory para encapsular o IOException em uma exception não checada
+	// Factorys para encapsular o IOException em uma exception não checada
 	private Socket socketFactory(String ip, int port) {
 		
 		try {
@@ -59,7 +59,6 @@ public class Boundary {
 	}
 
 	// Metodos
-	
 	public JSONObject request(JSONObject json) {
 		out.println(json.toString());
 		
@@ -72,5 +71,5 @@ public class Boundary {
 		}
 
 	}
-
+	
 }

@@ -27,9 +27,9 @@ public class Cliente {
 	private JTextField emailLoginField;
 	private JPasswordField passLoginField;
 	private JTextField emailSignupField;
-	private JTextField userSignupField;
-	private JPasswordField passSignField;
-	private JPasswordField repassSignField;
+	private JTextField nomeSignupField;
+	private JPasswordField passSignupField;
+	private JPasswordField repassSignupField;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -103,23 +103,23 @@ public class Cliente {
 		app.getContentPane().add(signupPanel);
 		signupPanel.setVisible(false);
 
-		userSignupField = new JTextField();
-		userSignupField.setBounds(142, 83, 200, 20);
-		signupPanel.add(userSignupField);
-		userSignupField.setColumns(10);
+		nomeSignupField = new JTextField();
+		nomeSignupField.setBounds(142, 83, 200, 20);
+		signupPanel.add(nomeSignupField);
+		nomeSignupField.setColumns(10);
 
 		emailSignupField = new JTextField();
 		emailSignupField.setBounds(142, 114, 200, 20);
 		signupPanel.add(emailSignupField);
 		emailSignupField.setColumns(10);
 
-		passSignField = new JPasswordField();
-		passSignField.setBounds(142, 145, 200, 20);
-		signupPanel.add(passSignField);
+		passSignupField = new JPasswordField();
+		passSignupField.setBounds(142, 145, 200, 20);
+		signupPanel.add(passSignupField);
 
-		repassSignField = new JPasswordField();
-		repassSignField.setBounds(142, 176, 200, 20);
-		signupPanel.add(repassSignField);
+		repassSignupField = new JPasswordField();
+		repassSignupField.setBounds(142, 176, 200, 20);
+		signupPanel.add(repassSignupField);
 
 		JButton sendForm = new JButton("Enviar");
 		sendForm.setBounds(142, 207, 63, 23);
@@ -149,8 +149,8 @@ public class Cliente {
 		JRadioButton showpass2 = new JRadioButton("show");
 		showpass2.setBounds(348, 175, 109, 23);
 		signupPanel.add(showpass2);
-		showpass2.addActionListener(new ShowPassword(passSignField));
-		showpass2.addActionListener(new ShowPassword(repassSignField));
+		showpass2.addActionListener(new ShowPassword(passSignupField));
+		showpass2.addActionListener(new ShowPassword(repassSignupField));
 
 		singup.addActionListener(new SwitchComponentListener(signupPanel, switchComponents));
 		back.addActionListener(new SwitchComponentListener(loginPanel, switchComponents));
@@ -159,7 +159,6 @@ public class Cliente {
 	}
 
 	// Observadores
-
 	private class ShowPassword implements ActionListener {
 		private JPasswordField field;
 		private char defaultChar;
@@ -229,14 +228,14 @@ public class Cliente {
 			message.put("logic", "SignupLogic");
 
 			try {
-//				String username = checkReturnUsername(userSignupField);
-				String password = checkCompareReturnPassword(passSignField, repassSignField);
+				String nome = nomeSignupField.getText();
+				String password = checkCompareReturnPassword(passSignupField, repassSignupField);
 				String email = checkReturnEmail(emailSignupField);
 
-//				message.put("username", username);
+				message.put("nome", nome);
 				message.put("password", password);
 				message.put("email", email);
-
+								
 				JSONObject response = boundary.request(message);
 
 				if (response.getBoolean("code")) {
@@ -246,7 +245,7 @@ public class Cliente {
 					new MainApp(boundary, token);
 
 				} else {
-					System.out.print("Colocar um dialog aqui");
+					System.out.print(response.getString("description"));
 
 				}
 
@@ -258,9 +257,8 @@ public class Cliente {
 
 	}
 
-	// Tratar os dados para não haver problemas no servidor
-
-
+	
+	// Tratar os dados para não ter problemas no servidor
 	private String checkReturnEmail(JTextField email) 
 			throws IllegalArgumentException {
 
@@ -278,7 +276,7 @@ public class Cliente {
 
 		for (String part : list) {
 			if (part.isBlank()) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Email Invalido");
 			}
 
 		}
@@ -311,8 +309,8 @@ public class Cliente {
 		char[] pass1 = password1.getPassword();
 		char[] pass2 = password2.getPassword();
 
-		if (pass1.length < 8) {
-			throw new IllegalArgumentException();
+		if (pass1.length < 4) {
+			throw new IllegalArgumentException("Senha invalida");
 
 		} else {
 			for (int i = 0 ; i < pass1.length ; i++) {

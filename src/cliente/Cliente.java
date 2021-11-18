@@ -59,44 +59,6 @@ public class Cliente {
 		app.setResizable(false);
 		app.setLocationRelativeTo(null);
 
-		JPanel loginPanel = new JPanel();
-		loginPanel.setBounds(0, 0, 484, 311);
-		app.getContentPane().add(loginPanel);
-		loginPanel.setLayout(null);
-
-		emailLoginField = new JTextField();
-		emailLoginField.setBounds(142, 145, 200, 20);
-		loginPanel.add(emailLoginField);
-		emailLoginField.setColumns(10);
-
-		passLoginField = new JPasswordField();
-		passLoginField.setBounds(142, 176, 200, 20);
-		loginPanel.add(passLoginField);
-
-		JButton signin = new JButton("Logar");
-		signin.setBounds(142, 207, 61, 23);
-		signin.addActionListener(new ActLogin());
-		loginPanel.add(signin);
-
-		JButton singup = new JButton("Cadastrar");
-		singup.setBounds(261, 207, 81, 23);
-		loginPanel.add(singup);
-
-		JRadioButton showPassword = new JRadioButton("show");
-		showPassword.setBounds(348, 175, 109, 23);
-		showPassword.addActionListener(new ShowPassword(passLoginField));
-		loginPanel.add(showPassword);
-
-		JLabel emailLoginLabel = new JLabel("E-Mail");
-		emailLoginLabel.setBounds(78, 148, 54, 14);
-		loginPanel.add(emailLoginLabel);
-
-		JLabel passLoginLabel = new JLabel("Password");
-		passLoginLabel.setBounds(78, 179, 46, 14);
-		loginPanel.add(passLoginLabel);
-
-		SwitchComponents switchComponents = new SwitchComponents(loginPanel);
-
 		JPanel signupPanel = new JPanel();
 		signupPanel.setLayout(null);
 		signupPanel.setBounds(0, 0, 484, 311);
@@ -151,9 +113,47 @@ public class Cliente {
 		signupPanel.add(showpass2);
 		showpass2.addActionListener(new ShowPassword(passSignupField));
 		showpass2.addActionListener(new ShowPassword(repassSignupField));
-
-		singup.addActionListener(new SwitchComponentListener(signupPanel, switchComponents));
-		back.addActionListener(new SwitchComponentListener(loginPanel, switchComponents));
+		
+				JPanel loginPanel = new JPanel();
+				loginPanel.setBounds(0, 0, 484, 311);
+				app.getContentPane().add(loginPanel);
+				loginPanel.setLayout(null);
+				
+						emailLoginField = new JTextField();
+						emailLoginField.setBounds(142, 145, 200, 20);
+						loginPanel.add(emailLoginField);
+						emailLoginField.setColumns(10);
+						
+								passLoginField = new JPasswordField();
+								passLoginField.setBounds(142, 176, 200, 20);
+								loginPanel.add(passLoginField);
+								
+										JButton signin = new JButton("Logar");
+										signin.setBounds(142, 207, 61, 23);
+										signin.addActionListener(new ActLogin());
+										loginPanel.add(signin);
+										
+												JButton singup = new JButton("Cadastrar");
+												singup.setBounds(261, 207, 81, 23);
+												loginPanel.add(singup);
+												
+														JRadioButton showPassword = new JRadioButton("show");
+														showPassword.setBounds(348, 175, 109, 23);
+														showPassword.addActionListener(new ShowPassword(passLoginField));
+														loginPanel.add(showPassword);
+														
+																JLabel emailLoginLabel = new JLabel("E-Mail");
+																emailLoginLabel.setBounds(78, 148, 54, 14);
+																loginPanel.add(emailLoginLabel);
+																
+																		JLabel passLoginLabel = new JLabel("Password");
+																		passLoginLabel.setBounds(78, 179, 46, 14);
+																		loginPanel.add(passLoginLabel);
+																		
+																				SwitchComponents switchComponents = new SwitchComponents(loginPanel);
+																				
+																						singup.addActionListener(new SwitchComponentListener(signupPanel, switchComponents));
+																						back.addActionListener(new SwitchComponentListener(loginPanel, switchComponents));
 
 
 	}
@@ -233,8 +233,8 @@ public class Cliente {
 				String email = checkReturnEmail(emailSignupField);
 
 				message.put("nome", nome);
-				message.put("password", password);
 				message.put("email", email);
+				message.put("password", password);
 								
 				JSONObject response = boundary.request(message);
 
@@ -265,10 +265,10 @@ public class Cliente {
 		String value = email.getText();
 
 		if (value.isBlank()) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Email em branco");
 
 		} else if (!value.contains("@")) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Email Invalido");
 
 		}
 

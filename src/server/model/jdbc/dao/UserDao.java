@@ -21,7 +21,7 @@ public class UserDao {
 	
 	// Create
 	public void createUser(User user) {
-		String sql = "insert into usuario() values(?, ?, ?, ?);";
+		String sql = "insert into usuario(id, nome, userpass, email) values(?, ?, ?, ?);";
 
 		try (			
 			PreparedStatement stmt = this.connection.prepareStatement(sql);

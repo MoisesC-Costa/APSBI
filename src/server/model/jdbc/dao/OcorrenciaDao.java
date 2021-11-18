@@ -1,12 +1,11 @@
 package server.model.jdbc.dao;
 
-import server.model.bean.Ocorrencia;
-import server.model.jdbc.factory.ConnectionFactory;
-
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.Date;
+
+import server.model.bean.Ocorrencia;
+import server.model.jdbc.factory.ConnectionFactory;
 
 public class OcorrenciaDao {
 
@@ -19,7 +18,7 @@ public class OcorrenciaDao {
 	// Create
 	public void createOcorrencia(Ocorrencia ocorrencia) {
 		String sqlOcorrencia = "insert into ocorrencia() values(?, ?, ?, ?, ?)";
-		String sqlLocalidade = "insert into localidade() values(?, ?, ?)";
+		String sqlLocalidade = "insert into localidade() values(?, ?, ?, ?)";
 		
 		try (
 				PreparedStatement stmt = connection.prepareStatement(sqlLocalidade);
@@ -28,6 +27,7 @@ public class OcorrenciaDao {
 			stmt.setString(1, ocorrencia.getEstado());
 			stmt.setDouble(2, ocorrencia.getLongitude());
 			stmt.setDouble(3, ocorrencia.getLatitude());
+			stmt.setString(4, ocorrencia.getMunicipio());
 			
 			stmt.execute();
 			
@@ -42,15 +42,12 @@ public class OcorrenciaDao {
 			stmt.setDouble(4, ocorrencia.getLatitude());
 			stmt.setString(5, ocorrencia.getBioma());
 			
-			Date data = new Date(ocorrencia.getDataOcorrencia().getTimeInMillis());
-			stmt.setDate(2, data);
+			stmt.setLong(2, ocorrencia.getDataOcorrencia().getTimeInMillis());
 			
 			stmt.execute();
 			
 			
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+		} catch (SQLException e) {}
 		
 	}
 	

@@ -14,7 +14,8 @@ public class CreateOcorrencia {
 		ocorrencia.setLongitude(0);
 		ocorrencia.setLatitude(0);
 		ocorrencia.setBioma("Cogumelos");
-		ocorrencia.setEstado("Japão");
+		ocorrencia.setEstado("Acre");
+		ocorrencia.setMunicipio("Não existe Bixo");
 		
 		dao.createOcorrencia(ocorrencia);
 		

@@ -8,6 +8,7 @@ public class Ocorrencia {
 	private double latitude;
 	private String estado;
 	private String bioma;
+	private String municipio;
 	private Calendar dataOcorrencia;
 	public String getEstado() {
 		return estado;
@@ -53,5 +54,15 @@ public class Ocorrencia {
 	public void setDataOcorrencia(Calendar dataOcorrencia) {
 		this.dataOcorrencia = dataOcorrencia;
 	}
+
+	public String getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+	
+	
 	
 }

@@ -1,24 +1,19 @@
 package server.controller.logic;
 
-import java.util.Calendar;
-
 import org.json.JSONObject;
 
-import server.model.jdbc.dao.CasosPorBiomasDao;
+import server.model.jdbc.dao.CasosPorEstadosDao;
 import server.session.Session;
 
 // Pegar os dados do grafico de pizza
-public class GetPizzaData implements Logic {
+public class GetBarraData implements Logic {
 
 	@Override
 	public void exec(JSONObject packet, Session session) {
 		String autToken = packet.getString("token");
 		Session.autToken(autToken);
 
-		CasosPorBiomasDao dao = new CasosPorBiomasDao();
-
-		Calendar ano = Calendar.getInstance();
-		ano.setTimeInMillis(packet.getLong("date"));
+		CasosPorEstadosDao dao = new CasosPorEstadosDao();
 
 		JSONObject response = new JSONObject();
 		

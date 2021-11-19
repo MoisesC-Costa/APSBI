@@ -15,16 +15,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.json.JSONObject;
 
+import cliente.app.interfaces.LoaderGrafico;
 import cliente.app.listeners.SwitchComponentListener;
 import cliente.app.tools.SwitchComponents;
 import cliente.boundary.Boundary;
@@ -46,6 +47,7 @@ public class MainApp {
 	private JPanel pizzaPanel;
 	
 	private JPanel conteudoPanel;
+	private JPanel barraPanel;
 	
 	public MainApp(Boundary boundary, String token) {
 		this.boundary = boundary;
@@ -133,15 +135,16 @@ public class MainApp {
 		graficosPage.addTab("Grafico Pizza", null, pizzaPanel, null);
 		pizzaPanel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel barraPanel = new JPanel();
+		barraPanel = new JPanel();
 		graficosPage.addTab("Grafico Barras", null, barraPanel, null);
 		barraPanel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel histogramaPanel = new JPanel();
-		graficosPage.addTab("Histografa", null, histogramaPanel, null);
+		graficosPage.addTab("Histograma", null, histogramaPanel, null);
 		histogramaPanel.setLayout(new BorderLayout(0, 0));
-
-		graficosPage.addChangeListener(new LoadGrafico());
+		
+		new PizzaLoader().loader();
+		new BarraLoader().loader();
 		
 	}
 
@@ -195,21 +198,8 @@ public class MainApp {
 	}
 	
 	// Observadores
-
-	/// Carregar os graficos
-	private class LoadGrafico implements ChangeListener {
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			LoaderGrafico[] loaders = {new PizzaLoader(), new BarraLoader(), new HistogramaLoader()};
-			
-			loaders[graficosPage.getSelectedIndex()].loader();
-			
-		}
-		
-	}
 	
-	/// Enviar o formulario do DBQueimadas para o servidor
+		/// Enviar o formulario do DBQueimadas para o servidor
 	private class UploadFormDBQueimadas implements ActionListener {
 
 		@Override
@@ -264,12 +254,9 @@ public class MainApp {
 	}
 	
 	// Carregar os Graficos
-	private interface LoaderGrafico {
-		public void loader();
-	}
-	
-	private class PizzaLoader implements LoaderGrafico {
+	public class PizzaLoader implements LoaderGrafico {
 
+		@SuppressWarnings("static-access")
 		@Override
 		public void loader() {
 			Calendar ano = Calendar.getInstance();
@@ -287,11 +274,11 @@ public class MainApp {
 				
 				DefaultPieDataset<String> pizza = new DefaultPieDataset<String>();
 				
-				for (String columns : JSONObject.getNames(data)) {
+				for (String columns : data.getNames(data)) {
 					pizza.setValue(columns, data.getInt(columns));
 				}
 				
-				JFreeChart grafico = ChartFactory.createPieChart("Focos de Incendio X Biomas",
+				JFreeChart grafico = ChartFactory.createPieChart("Focus de Incendios nos Biomas",
 																	pizza, true, true, false);
 				ChartPanel panel = new ChartPanel(grafico);
 				
@@ -307,21 +294,49 @@ public class MainApp {
 	
 	}
 	
-	private class BarraLoader implements LoaderGrafico {
-		
+	public class BarraLoader implements LoaderGrafico {
+	
+		@SuppressWarnings("static-access")
 		@Override
 		public void loader() {
-			System.out.println("Carregou a Barra");
+
+			Calendar ano = Calendar.getInstance();
+			ano.set(2021, 1, 1);
 			
+			JSONObject message = new JSONObject();
+			message.put("logic", "GetBarraData");
+			message.put("token", token);
+			message.put("date", ano.getTimeInMillis());
+			
+			JSONObject resp = boundary.request(message);
+						
+			if (resp.getBoolean("code")) {
+				JSONObject data = resp.getJSONObject("data");
+				
+				DefaultCategoryDataset barra = new DefaultCategoryDataset();
+				
+				for (String columns : data.getNames(data)) {
+					barra.setValue(data.getInt(columns), columns, "");
+				}
+				
+				JFreeChart grafico = ChartFactory.createBarChart("Focos de Incendio", null, "Casos", barra,
+						PlotOrientation.VERTICAL, true, true, false);
+				
+				ChartPanel painel = new ChartPanel(grafico);
+				
+				barraPanel.add(painel, BorderLayout.CENTER);
+			}
+
 		}
-		
+
 	}
 	
-	private class HistogramaLoader implements LoaderGrafico {
+	public class HistogramaLoader implements LoaderGrafico {
 		
 		@Override
 		public void loader() {
 			System.out.println("Carregou o Histograma");
 		}
 	}	
+
 }

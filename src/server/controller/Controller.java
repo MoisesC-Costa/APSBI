@@ -5,11 +5,22 @@ import org.json.JSONObject;
 import server.controller.logic.Logic;
 import server.session.Session;
 
-public class Controller {
+public class Controller implements Runnable {
+
+	private JSONObject packet;
+	private Session session;
 	
-	private Controller() {}
+	public Controller(JSONObject packet, Session session) {
+		this.packet = packet;
+		this.session = session;
+	}
+
+	@Override
+	public void run() {
+		this.execLogic();
+	}
 	
-	public static void execLogic(JSONObject packet, Session session) {
+	private void execLogic() {
 		String logicName = packet.getString("logic");
 		String className = "server.controller.logic." + logicName;
 		
@@ -23,7 +34,5 @@ public class Controller {
 			throw new RuntimeException();
 
 		}
-		
 	}
-	
 }

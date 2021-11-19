@@ -1,11 +1,8 @@
 package server.model.jdbc.dao;
-
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 
 import org.json.JSONObject;
 
@@ -19,21 +16,17 @@ public class CasosPorBiomasDao {
 		
 	}
 	
-	public JSONObject getCasos(Calendar ano) {
+	public JSONObject getCasos() {
 		JSONObject data = new JSONObject();
 		
 		String sql = "select bioma, count(bioma) as casos "
 				+ "from ocorrencia "
-				+ "where data_ocorrencia >= ?"
 				+ "group by bioma";
 		
 		try (
 				PreparedStatement stmt = connection.prepareStatement(sql);
 				) {
-			
-				Date date = new Date(ano.getTimeInMillis());
-				stmt.setDate(1, date);
-			
+						
 				ResultSet rs = stmt.executeQuery();
 				System.out.println();
 				

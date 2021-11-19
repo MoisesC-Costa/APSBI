@@ -25,7 +25,6 @@ public class Session implements Runnable{
 		this.scanner = CommunicationFactory.getScanner(cliente);
 	}
 
-	
 	// Abrindo o canal para receber as requisições
 	@Override
 	public void run() {
@@ -43,7 +42,8 @@ public class Session implements Runnable{
 	public void request(JSONObject packet) {
 		
 		try {
-			Controller.execLogic(packet, this);
+			Controller con = new Controller(packet, this);
+			new Thread(con).start();
 
 		} catch (Exception e) {
 			JSONObject erroPacket = new JSONObject();

@@ -12,34 +12,20 @@ public class UploadDBQueimadasLogic implements Logic {
 	@Override
 	public void exec(JSONObject packet, Session session) {
 		String autToken = packet.getString("token");
-		System.out.println(Session.sessionTokens);
+		Session.autToken(autToken);
 
-		// Verificar se o usuario está autenticado
-		boolean tokenNotFound = true;
-		for (String token : Session.sessionTokens) {
-			if (token.equals(autToken)) {
-				tokenNotFound = false;
 
-			}
+		OcorrenciaDao dao = new OcorrenciaDao();
 
-		}
+		JSONObject csv = packet.getJSONObject("csv");
+		session.response(new JSONObject("{'code':true}"));
 
-		if (tokenNotFound) {
-			throw new RuntimeException("Usuario não autenticado!");
+		JSONArray array = csv.getJSONArray("data");
 
-		} else {
-			OcorrenciaDao dao = new OcorrenciaDao();
+		// lançar a insersão de dados em outra thread
+		// para não blocar a comunicação
+		new Thread(new DBQueimadasUploader(dao, array)).start();
 
-			JSONObject csv = packet.getJSONObject("csv");
-			session.response(new JSONObject("{'code':true}"));
-
-			JSONArray array = csv.getJSONArray("data");
-			
-			// lançar a insersão de dados em outra thread
-			// para não blocar a comunicação
-			new Thread(new DBQueimadasUploader(dao, array)).start();
-
-		}
 
 	}
 

@@ -1,10 +1,12 @@
 package cliente.app;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Calendar;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,8 +15,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 import org.json.JSONObject;
 
 import cliente.app.listeners.SwitchComponentListener;
@@ -27,6 +35,7 @@ public class MainApp {
 	private Boundary boundary;
 	private String token;
 	
+	private JTabbedPane graficosPage;
 	private JFrame frame;
 	private JPanel homePanel;
 	private JPanel etlPanel;
@@ -34,6 +43,9 @@ public class MainApp {
 	private JButton home;
 	private JButton graficos;
 	private JButton etl;
+	private JPanel pizzaPanel;
+	
+	private JPanel conteudoPanel;
 	
 	public MainApp(Boundary boundary, String token) {
 		this.boundary = boundary;
@@ -50,6 +62,17 @@ public class MainApp {
 		frame.getContentPane().setLayout(null);
 		frame.setLocationRelativeTo(null);
 		
+		renderOptionPanel();
+		
+		renderConteudoPanel();
+		
+		setSwitchComponents();
+		
+	}
+
+	
+	// Estruturas
+	private void renderOptionPanel() {
 		JPanel optionsPanel = new JPanel();
 		optionsPanel.setBounds(0, 0, 484, 34);
 		optionsPanel.setBackground(Color.LIGHT_GRAY);
@@ -78,31 +101,67 @@ public class MainApp {
 		graficos.setBounds(94, 1, 32, 32);
 		graficos.setIcon(new ImageIcon("img\\graficos.png"));
 		optionsPanel.add(graficos);
-		
-		JPanel conteudoPanel = new JPanel();
+
+	}
+
+	private void renderConteudoPanel() {
+		conteudoPanel = new JPanel();
 		conteudoPanel.setBounds(0, 34, 484, 277);
 		frame.getContentPane().add(conteudoPanel);
 		conteudoPanel.setLayout(null);
 		
+		renderGraficosPage();
+
+		renderETLPage();
+		
+		renderHomePage();
+
+	}
+	
+	public void renderGraficosPage() {
 		graficosPanel = new JPanel();
 		graficosPanel.setBounds(0, 0, 484, 277);
 		conteudoPanel.add(graficosPanel);
 		graficosPanel.setLayout(null);
 		graficosPanel.setVisible(false);
 		
-		JTabbedPane graficosPage = new JTabbedPane(JTabbedPane.TOP);
+		graficosPage = new JTabbedPane(JTabbedPane.TOP);
 		graficosPage.setBounds(0, 0, 484, 277);
 		graficosPanel.add(graficosPage);
 		
-		JPanel rankingPanel = new JPanel();
-		graficosPage.addTab("Ranking de Queimadas", null, rankingPanel, null);
+		pizzaPanel = new JPanel();
+		graficosPage.addTab("Grafico Pizza", null, pizzaPanel, null);
+		pizzaPanel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_2 = new JPanel();
-		graficosPage.addTab("New tab", null, panel_2, null);
+		JPanel barraPanel = new JPanel();
+		graficosPage.addTab("Grafico Barras", null, barraPanel, null);
+		barraPanel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_3 = new JPanel();
-		graficosPage.addTab("New tab", null, panel_3, null);
+		JPanel histogramaPanel = new JPanel();
+		graficosPage.addTab("Histografa", null, histogramaPanel, null);
+		histogramaPanel.setLayout(new BorderLayout(0, 0));
+
+		graficosPage.addChangeListener(new LoadGrafico());
 		
+	}
+
+	private void renderHomePage() {
+		homePanel = new JPanel();
+		homePanel.setBounds(0, 0, 484, 277);
+		conteudoPanel.add(homePanel);
+		homePanel.setLayout(null);
+		
+		JLabel userLabel = new JLabel("New label");
+		userLabel.setBounds(10, 11, 46, 14);
+		homePanel.add(userLabel);
+		
+		JLabel email = new JLabel("New label");
+		email.setBounds(10, 36, 46, 14);
+		homePanel.add(email);
+	}
+	
+	private void renderETLPage() {
+
 		etlPanel = new JPanel();
 		etlPanel.setBounds(0, 0, 484, 277);
 		conteudoPanel.add(etlPanel);
@@ -124,26 +183,10 @@ public class MainApp {
 		uploadForm.setBorderPainted(false);
 		uploadForm.addActionListener(new UploadFormDBQueimadas());
 		panel.add(uploadForm);
-		
-		homePanel = new JPanel();
-		homePanel.setBounds(0, 0, 484, 277);
-		conteudoPanel.add(homePanel);
-		homePanel.setLayout(null);
-		
-		JLabel userLabel = new JLabel("New label");
-		userLabel.setBounds(10, 11, 46, 14);
-		homePanel.add(userLabel);
-		
-		JLabel email = new JLabel("New label");
-		email.setBounds(10, 36, 46, 14);
-		homePanel.add(email);
-		
-		setSwitchComponents();
-		
-	}
 
-	// Methodos Estruturais
-	public void setSwitchComponents() {
+	}
+	
+	private void setSwitchComponents() {
 		SwitchComponents switcher = new SwitchComponents(homePanel);		
 		home.addActionListener(new SwitchComponentListener(homePanel, switcher));
 		graficos.addActionListener(new SwitchComponentListener(graficosPanel, switcher));
@@ -152,7 +195,21 @@ public class MainApp {
 	}
 	
 	// Observadores
-	// Enviar o formulario do DBQueimadas para o servidor
+
+	/// Carregar os graficos
+	private class LoadGrafico implements ChangeListener {
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			LoaderGrafico[] loaders = {new PizzaLoader(), new BarraLoader(), new HistogramaLoader()};
+			
+			loaders[graficosPage.getSelectedIndex()].loader();
+			
+		}
+		
+	}
+	
+	/// Enviar o formulario do DBQueimadas para o servidor
 	private class UploadFormDBQueimadas implements ActionListener {
 
 		@Override
@@ -206,4 +263,65 @@ public class MainApp {
 		
 	}
 	
+	// Carregar os Graficos
+	private interface LoaderGrafico {
+		public void loader();
+	}
+	
+	private class PizzaLoader implements LoaderGrafico {
+
+		@Override
+		public void loader() {
+			Calendar ano = Calendar.getInstance();
+			ano.set(2021, 1, 1);
+			
+			JSONObject message = new JSONObject();
+			message.put("logic", "GetPizzaData");
+			message.put("token", token);
+			message.put("date", ano.getTimeInMillis());
+			
+			JSONObject resp = boundary.request(message);
+						
+			if (resp.getBoolean("code")) {
+				JSONObject data = resp.getJSONObject("data");
+				
+				DefaultPieDataset<String> pizza = new DefaultPieDataset<String>();
+				
+				for (String columns : JSONObject.getNames(data)) {
+					pizza.setValue(columns, data.getInt(columns));
+				}
+				
+				JFreeChart grafico = ChartFactory.createPieChart("Focos de Incendio X Biomas",
+																	pizza, true, true, false);
+				ChartPanel panel = new ChartPanel(grafico);
+				
+				pizzaPanel.add(panel, BorderLayout.CENTER);
+				
+				
+			} else {
+				System.out.println(resp.getString("description"));
+
+			}
+			
+		}
+	
+	}
+	
+	private class BarraLoader implements LoaderGrafico {
+		
+		@Override
+		public void loader() {
+			System.out.println("Carregou a Barra");
+			
+		}
+		
+	}
+	
+	private class HistogramaLoader implements LoaderGrafico {
+		
+		@Override
+		public void loader() {
+			System.out.println("Carregou o Histograma");
+		}
+	}	
 }

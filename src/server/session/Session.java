@@ -39,6 +39,7 @@ public class Session implements Runnable{
 		
 	}
 	
+	// Nova Requisição do cliente
 	public void request(JSONObject packet) {
 		
 		try {
@@ -57,10 +58,12 @@ public class Session implements Runnable{
 		}
 	}
 	
+	// Resposta para o cliente
 	public void response(JSONObject packet) {		
 			out.println(packet.toString());
 	}
 
+	// Sistema para não ter 2 usuarios logado no mesmo cadastro
 	public void setAutenticateAtributes(String token, User user) {
 		this.token = token;
 		this.user = user;
@@ -74,6 +77,23 @@ public class Session implements Runnable{
 	private void delAutenticateAtributes() {
 		Session.sessionTokens.remove(token);
 		Session.userActives.remove(user.getEmail());
+		
+	}
+
+	// Sistema para autenticar as tokens
+	public static void autToken(String token) {
+		boolean tokenNotFound = true;
+		for (String item : Session.sessionTokens) {
+			if (item.equals(token)) {
+				tokenNotFound = false;
+
+			}
+
+		}
+
+		if (tokenNotFound) {
+			throw new RuntimeException("Usuario não autenticado!");
+		}
 		
 	}
 	

@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -49,6 +50,8 @@ public class MainApp {
 	private JButton etl;
 	private JPanel pizzaPanel;
 	private JPanel histogramaPanel;
+	private JLabel userLabel;
+	private JLabel emailLabel;
 	
 	private JPanel conteudoPanel;
 	private JPanel barraPanel;
@@ -73,6 +76,35 @@ public class MainApp {
 		renderConteudoPanel();
 		
 		setSwitchComponents();
+		
+		// Para Ficar Atualizando os Graficos;
+		Runnable updateGrafics = new Runnable() {
+			private LoaderGrafico[] loaders = {new PizzaLoader(),
+										new BarraLoader(),
+										new HistogramaLoader()};
+		
+			@SuppressWarnings("static-access")
+			@Override
+			public void run() {
+				
+				try {
+					for (LoaderGrafico loader : loaders) {
+						loader.loader();
+						}
+					} catch(Exception e) {}
+				
+				try {
+					Thread.currentThread().sleep(60 * 1000);
+				} catch (InterruptedException e) {}
+
+				
+				run();
+				
+			}
+
+		};
+
+		new Thread(updateGrafics).start();
 		
 	}
 
@@ -115,12 +147,12 @@ public class MainApp {
 		conteudoPanel.setBounds(0, 34, 484, 277);
 		frame.getContentPane().add(conteudoPanel);
 		conteudoPanel.setLayout(null);
+
+		renderHomePage();
 		
 		renderGraficosPage();
 
-		renderETLPage();
-		
-		renderHomePage();
+		renderETLPage();		
 
 	}
 	
@@ -147,9 +179,6 @@ public class MainApp {
 		graficosPage.addTab("Histograma", null, histogramaPanel, null);
 		histogramaPanel.setLayout(new BorderLayout(0, 0));
 		
-		new PizzaLoader().loader();
-		new BarraLoader().loader();
-		new HistogramaLoader().loader();
 		
 	}
 
@@ -159,13 +188,15 @@ public class MainApp {
 		conteudoPanel.add(homePanel);
 		homePanel.setLayout(null);
 		
-		JLabel userLabel = new JLabel("New label");
-		userLabel.setBounds(10, 11, 46, 14);
+		userLabel = new JLabel("New label");
+		userLabel.setBounds(10, 11, 464, 14);
 		homePanel.add(userLabel);
 		
-		JLabel email = new JLabel("New label");
-		email.setBounds(10, 36, 46, 14);
-		homePanel.add(email);
+		emailLabel = new JLabel("New label");
+		emailLabel.setBounds(10, 36, 464, 14);
+		homePanel.add(emailLabel);
+
+		new InfoUser().loader();
 	}
 	
 	private void renderETLPage() {
@@ -291,7 +322,7 @@ public class MainApp {
 				
 				
 			} else {
-				System.out.println(resp.getString("description"));
+				JOptionPane.showMessageDialog(null, resp.getString("description"));
 
 			}
 			
@@ -330,6 +361,9 @@ public class MainApp {
 				ChartPanel painel = new ChartPanel(grafico);
 				
 				barraPanel.add(painel, BorderLayout.CENTER);
+			} else {
+				JOptionPane.showMessageDialog(null, resp.getString("description"));
+				
 			}
 
 		}
@@ -373,10 +407,37 @@ public class MainApp {
 				
 				histogramaPanel.add(panel, BorderLayout.CENTER);
 				
+			} else {
+				JOptionPane.showMessageDialog(null, resp.getString("description"));
 			}
 
 		}
 
 	}
 
+	// Carregar Informações do Usuario
+	
+	public class InfoUser {
+		
+		public void loader() {
+			JSONObject message = new JSONObject();
+			message.put("logic", "GetInfoUsuario");
+			message.put("token", token);
+
+			JSONObject response = boundary.request(message);
+			
+			if (response.getBoolean("code")) {
+				userLabel.setText("Nome: " + response.getString("nome"));
+				emailLabel.setText("Email: " + response.getString("email"));
+
+				
+			} else {
+				JOptionPane.showMessageDialog(null, response.getString("description"));
+
+			}
+			
+		}
+
+	}
+	
 }

@@ -33,7 +33,7 @@ public class LoginLogic implements Logic{
 				response.put("code", true);
 				
 				String token = SecureTokenFactory.getUserToken();
-				session.setAutenticateAtributes(token, user);
+				session.setAutenticateAtributes(token, test);
 				
 				response.put("token", token);
 				

@@ -97,4 +97,8 @@ public class Session implements Runnable{
 		
 	}
 	
+	public User getUser() {
+		return user;
+	}
+	
 }

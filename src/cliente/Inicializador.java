@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -47,8 +48,15 @@ public class Inicializador {
 			public void run() {
 				try {
 					UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-					Inicializador window = new Inicializador();
-					window.app.setVisible(true);
+					
+					try {
+						Inicializador window = new Inicializador();
+						window.app.setVisible(true);
+
+					} catch(Exception e) {
+						JOptionPane.showMessageDialog(null, "Não foi possivel connectar no servidor");
+					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -229,13 +237,13 @@ public class Inicializador {
 					new MainApp(boundary, response.getString("token"));
 
 				} else {
-					System.out.println("Dialog" + response.getString("description"));
+					JOptionPane.showMessageDialog(null, response.getString("description"));
 
 				}
 
 
 			} catch(IllegalArgumentException e) {
-
+				JOptionPane.showMessageDialog(null, "Ocorreu um erro");
 			}
 
 		}
@@ -267,12 +275,12 @@ public class Inicializador {
 					new MainApp(boundary, token);
 
 				} else {
-					System.out.print(response.getString("description"));
+					JOptionPane.showMessageDialog(null, response.getString("description"));
 
 				}
 
 			} catch (IllegalArgumentException e) {
-				System.out.println(e.getMessage());
+				JOptionPane.showMessageDialog(null, "Ocorreu um Erro");
 			}
 
 		}

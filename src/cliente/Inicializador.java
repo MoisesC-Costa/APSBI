@@ -71,7 +71,7 @@ public class Inicializador {
 
 	// Estrutura da Interface
 	private void initialize() {
-		app = new JFrame("Angra");
+		app = new JFrame("Trabalho APS BI");
 		app.setSize(500, 350);
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		app.getContentPane().setLayout(null);

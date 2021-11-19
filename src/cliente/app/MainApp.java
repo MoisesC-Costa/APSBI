@@ -23,6 +23,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cliente.app.interfaces.LoaderGrafico;
@@ -45,6 +48,7 @@ public class MainApp {
 	private JButton graficos;
 	private JButton etl;
 	private JPanel pizzaPanel;
+	private JPanel histogramaPanel;
 	
 	private JPanel conteudoPanel;
 	private JPanel barraPanel;
@@ -139,12 +143,13 @@ public class MainApp {
 		graficosPage.addTab("Grafico Barras", null, barraPanel, null);
 		barraPanel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel histogramaPanel = new JPanel();
+		histogramaPanel = new JPanel();
 		graficosPage.addTab("Histograma", null, histogramaPanel, null);
 		histogramaPanel.setLayout(new BorderLayout(0, 0));
 		
 		new PizzaLoader().loader();
 		new BarraLoader().loader();
+		new HistogramaLoader().loader();
 		
 	}
 
@@ -332,11 +337,46 @@ public class MainApp {
 	}
 	
 	public class HistogramaLoader implements LoaderGrafico {
-		
+
 		@Override
 		public void loader() {
-			System.out.println("Carregou o Histograma");
+
+			Calendar ano = Calendar.getInstance();
+			ano.set(2021, 1, 1);
+			
+			JSONObject message = new JSONObject();
+			message.put("logic", "GetHistogramaData");
+			message.put("token", token);
+			message.put("date", ano.getTimeInMillis());
+			
+			JSONObject resp = boundary.request(message);
+						
+			if (resp.getBoolean("code")) {
+				JSONArray data = resp.getJSONArray("data");
+				
+				XYSeries casos = new XYSeries("Casos");
+				
+				for (int i = 0 ; i < data.length() ; i++) {
+					casos.add(i, data.getInt(i));
+				}
+				
+				XYSeriesCollection dataset = new XYSeriesCollection();
+				dataset.addSeries(casos);
+				
+				JFreeChart chart = ChartFactory.createXYLineChart(
+						"Evolução Diaria de Casos",
+						"Dias", "Casos", dataset,
+						PlotOrientation.VERTICAL,
+						true, true, false);
+				
+				ChartPanel panel = new ChartPanel(chart);
+				
+				histogramaPanel.add(panel, BorderLayout.CENTER);
+				
+			}
+
 		}
-	}	
+
+	}
 
 }

@@ -20,23 +20,34 @@ import cliente.app.listeners.SwitchComponentListener;
 import cliente.app.tools.SwitchComponents;
 import cliente.boundary.Boundary;
 
-public class Cliente {
-
+public class Inicializador {
+	
+	// Utilitarios
 	private Boundary boundary;
+	private SwitchComponents switchComponents;
+	
+	// Containers
 	private JFrame app;
+	private JPanel signupPanel;
+	private JPanel loginPanel;
+
+	// Components
 	private JTextField emailLoginField;
 	private JPasswordField passLoginField;
 	private JTextField emailSignupField;
 	private JTextField nomeSignupField;
 	private JPasswordField passSignupField;
 	private JPasswordField repassSignupField;
-
+	private JButton singup;
+	private JButton back;
+	
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-					Cliente window = new Cliente();
+					Inicializador window = new Inicializador();
 					window.app.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -45,7 +56,7 @@ public class Cliente {
 		});
 	}
 
-	public Cliente() {
+	public Inicializador() {
 		initialize();
 		boundary = new Boundary();
 	}
@@ -59,7 +70,21 @@ public class Cliente {
 		app.setResizable(false);
 		app.setLocationRelativeTo(null);
 
-		JPanel signupPanel = new JPanel();
+		renderLogin();
+		switchComponents = new SwitchComponents(loginPanel);
+		
+		renderSingup();
+		
+		singup.addActionListener(new SwitchComponentListener(signupPanel, switchComponents));
+		back.addActionListener(new SwitchComponentListener(loginPanel, switchComponents));
+
+		
+	}
+
+	// Estruturas
+	private void renderSingup() {
+		
+		signupPanel = new JPanel();
 		signupPanel.setLayout(null);
 		signupPanel.setBounds(0, 0, 484, 311);
 		app.getContentPane().add(signupPanel);
@@ -104,7 +129,7 @@ public class Cliente {
 		repasswordLabel.setBounds(69, 179, 63, 14);
 		signupPanel.add(repasswordLabel);
 
-		JButton back = new JButton("Voltar");
+		back = new JButton("Voltar");
 		back.setBounds(279, 207, 63, 23);
 		signupPanel.add(back);
 
@@ -113,51 +138,48 @@ public class Cliente {
 		signupPanel.add(showpass2);
 		showpass2.addActionListener(new ShowPassword(passSignupField));
 		showpass2.addActionListener(new ShowPassword(repassSignupField));
-		
-				JPanel loginPanel = new JPanel();
-				loginPanel.setBounds(0, 0, 484, 311);
-				app.getContentPane().add(loginPanel);
-				loginPanel.setLayout(null);
-				
-						emailLoginField = new JTextField();
-						emailLoginField.setBounds(142, 145, 200, 20);
-						loginPanel.add(emailLoginField);
-						emailLoginField.setColumns(10);
-						
-								passLoginField = new JPasswordField();
-								passLoginField.setBounds(142, 176, 200, 20);
-								loginPanel.add(passLoginField);
-								
-										JButton signin = new JButton("Logar");
-										signin.setBounds(142, 207, 61, 23);
-										signin.addActionListener(new ActLogin());
-										loginPanel.add(signin);
-										
-												JButton singup = new JButton("Cadastrar");
-												singup.setBounds(261, 207, 81, 23);
-												loginPanel.add(singup);
-												
-														JRadioButton showPassword = new JRadioButton("show");
-														showPassword.setBounds(348, 175, 109, 23);
-														showPassword.addActionListener(new ShowPassword(passLoginField));
-														loginPanel.add(showPassword);
-														
-																JLabel emailLoginLabel = new JLabel("E-Mail");
-																emailLoginLabel.setBounds(78, 148, 54, 14);
-																loginPanel.add(emailLoginLabel);
-																
-																		JLabel passLoginLabel = new JLabel("Password");
-																		passLoginLabel.setBounds(78, 179, 46, 14);
-																		loginPanel.add(passLoginLabel);
-																		
-																				SwitchComponents switchComponents = new SwitchComponents(loginPanel);
-																				
-																						singup.addActionListener(new SwitchComponentListener(signupPanel, switchComponents));
-																						back.addActionListener(new SwitchComponentListener(loginPanel, switchComponents));
-
 
 	}
+	
+	private void renderLogin() {
+		loginPanel = new JPanel();
+		loginPanel.setBounds(0, 0, 484, 311);
+		app.getContentPane().add(loginPanel);
+		loginPanel.setLayout(null);
 
+		emailLoginField = new JTextField();
+		emailLoginField.setBounds(142, 145, 200, 20);
+		loginPanel.add(emailLoginField);
+		emailLoginField.setColumns(10);
+
+		passLoginField = new JPasswordField();
+		passLoginField.setBounds(142, 176, 200, 20);
+		loginPanel.add(passLoginField);
+
+		JButton signin = new JButton("Logar");
+		signin.setBounds(142, 207, 61, 23);
+		signin.addActionListener(new ActLogin());
+		loginPanel.add(signin);
+
+		singup = new JButton("Cadastrar");
+		singup.setBounds(261, 207, 81, 23);
+		loginPanel.add(singup);
+
+		JRadioButton showPassword = new JRadioButton("show");
+		showPassword.setBounds(348, 175, 109, 23);
+		showPassword.addActionListener(new ShowPassword(passLoginField));
+		loginPanel.add(showPassword);
+
+		JLabel emailLoginLabel = new JLabel("E-Mail");
+		emailLoginLabel.setBounds(78, 148, 54, 14);
+		loginPanel.add(emailLoginLabel);
+
+		JLabel passLoginLabel = new JLabel("Password");
+		passLoginLabel.setBounds(78, 179, 46, 14);
+		loginPanel.add(passLoginLabel);
+
+	}
+	
 	// Observadores
 	private class ShowPassword implements ActionListener {
 		private JPasswordField field;
@@ -219,7 +241,7 @@ public class Cliente {
 		}
 
 	}
-	
+
 	private class ActSignup implements ActionListener {
 
 		@Override
@@ -228,14 +250,14 @@ public class Cliente {
 			message.put("logic", "SignupLogic");
 
 			try {
-				String nome = nomeSignupField.getText();
+				String nome = checkReturnNome(nomeSignupField);
 				String password = checkCompareReturnPassword(passSignupField, repassSignupField);
 				String email = checkReturnEmail(emailSignupField);
 
 				message.put("nome", nome);
 				message.put("email", email);
 				message.put("password", password);
-								
+
 				JSONObject response = boundary.request(message);
 
 				if (response.getBoolean("code")) {
@@ -257,28 +279,40 @@ public class Cliente {
 
 	}
 
-	
+
 	// Tratar os dados para não ter problemas no servidor
+	private String checkReturnNome(JTextField nome) {
+		String value = nome.getText();
+		
+		if (value.isEmpty()) {
+			throw new IllegalArgumentException("Nome em branco");
+			
+		} else if (value.matches("^[a-zA-Z ]*$")) {
+			return value;
+			
+		} else {
+			throw new IllegalArgumentException("Nome Invalido");
+			
+		}
+				
+	}
+
 	private String checkReturnEmail(JTextField email) 
 			throws IllegalArgumentException {
 
 		String value = email.getText();
-
+		IllegalArgumentException emailInvalido = new IllegalArgumentException("Email Invalido");
+		
+		
 		if (value.isBlank()) {
 			throw new IllegalArgumentException("Email em branco");
 
 		} else if (!value.contains("@")) {
-			throw new IllegalArgumentException("Email Invalido");
+			throw emailInvalido;
 
-		}
-
-		String[] list = value.split("@");
-
-		for (String part : list) {
-			if (part.isBlank()) {
-				throw new IllegalArgumentException("Email Invalido");
-			}
-
+		} else if (value.split("@").length != 2) {
+			throw emailInvalido;
+			
 		}
 
 		return value;
@@ -332,6 +366,5 @@ public class Cliente {
 		}
 
 	}
-
-
+	
 }

@@ -1,6 +1,7 @@
 package server.model.jdbc.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -42,7 +43,8 @@ public class OcorrenciaDao {
 			stmt.setDouble(4, ocorrencia.getLatitude());
 			stmt.setString(5, ocorrencia.getBioma());
 			
-			stmt.setLong(2, ocorrencia.getDataOcorrencia().getTimeInMillis());
+			Date date = new Date(ocorrencia.getDataOcorrencia().getTimeInMillis());
+			stmt.setDate(2, date);
 			
 			stmt.execute();
 			
@@ -51,9 +53,4 @@ public class OcorrenciaDao {
 		
 	}
 	
-	// Retrieve
-	
-	// Update
-	
-	// Remove
 }

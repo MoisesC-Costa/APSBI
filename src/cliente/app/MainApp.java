@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,10 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.opencsv.exceptions.CsvValidationException;
 
 import cliente.app.listeners.SwitchComponentListener;
 import cliente.app.tools.SwitchComponents;
@@ -32,6 +28,12 @@ public class MainApp {
 	private String token;
 	
 	private JFrame frame;
+	private JPanel homePanel;
+	private JPanel etlPanel;
+	private JPanel graficosPanel;
+	private JButton home;
+	private JButton graficos;
+	private JButton etl;
 	
 	public MainApp(Boundary boundary, String token) {
 		this.boundary = boundary;
@@ -55,7 +57,7 @@ public class MainApp {
 		optionsPanel.setLayout(null);
 		frame.getContentPane().add(optionsPanel);
 		
-		JButton etl = new JButton();
+		etl = new JButton();
 		etl.setOpaque(false);
 		etl.setFocusPainted(false);
 		etl.setBounds(52, 1, 32, 32);
@@ -63,14 +65,14 @@ public class MainApp {
 		optionsPanel.add(etl);
 
 		
-		JButton home = new JButton();
+		home = new JButton();
 		home.setOpaque(false);
 		home.setFocusPainted(false);
 		home.setBounds(10, 1, 32, 32);
 		home.setIcon(new ImageIcon("img\\home.png"));
 		optionsPanel.add(home);
 		
-		JButton graficos = new JButton();
+		graficos = new JButton();
 		graficos.setOpaque(false);
 		graficos.setFocusPainted(false);
 		graficos.setBounds(94, 1, 32, 32);
@@ -82,7 +84,26 @@ public class MainApp {
 		frame.getContentPane().add(conteudoPanel);
 		conteudoPanel.setLayout(null);
 		
-		JPanel etlPanel = new JPanel();
+		graficosPanel = new JPanel();
+		graficosPanel.setBounds(0, 0, 484, 277);
+		conteudoPanel.add(graficosPanel);
+		graficosPanel.setLayout(null);
+		graficosPanel.setVisible(false);
+		
+		JTabbedPane graficosPage = new JTabbedPane(JTabbedPane.TOP);
+		graficosPage.setBounds(0, 0, 484, 277);
+		graficosPanel.add(graficosPage);
+		
+		JPanel rankingPanel = new JPanel();
+		graficosPage.addTab("Ranking de Queimadas", null, rankingPanel, null);
+		
+		JPanel panel_2 = new JPanel();
+		graficosPage.addTab("New tab", null, panel_2, null);
+		
+		JPanel panel_3 = new JPanel();
+		graficosPage.addTab("New tab", null, panel_3, null);
+		
+		etlPanel = new JPanel();
 		etlPanel.setBounds(0, 0, 484, 277);
 		conteudoPanel.add(etlPanel);
 		etlPanel.setLayout(null);
@@ -104,7 +125,7 @@ public class MainApp {
 		uploadForm.addActionListener(new UploadFormDBQueimadas());
 		panel.add(uploadForm);
 		
-		JPanel homePanel = new JPanel();
+		homePanel = new JPanel();
 		homePanel.setBounds(0, 0, 484, 277);
 		conteudoPanel.add(homePanel);
 		homePanel.setLayout(null);
@@ -117,36 +138,20 @@ public class MainApp {
 		email.setBounds(10, 36, 46, 14);
 		homePanel.add(email);
 		
-		JPanel graficosPanel = new JPanel();
-		graficosPanel.setBounds(0, 0, 484, 277);
-		conteudoPanel.add(graficosPanel);
-		graficosPanel.setLayout(null);
-		graficosPanel.setVisible(false);
-		
-		JTabbedPane graficosPage = new JTabbedPane(JTabbedPane.TOP);
-		graficosPage.setBounds(0, 0, 484, 277);
-		graficosPanel.add(graficosPage);
-		
-		JPanel panel_1 = new JPanel();
-		graficosPage.addTab("New tab", null, panel_1, null);
-		
-		JPanel panel_2 = new JPanel();
-		graficosPage.addTab("New tab", null, panel_2, null);
-		
-		JPanel panel_3 = new JPanel();
-		graficosPage.addTab("New tab", null, panel_3, null);
-		
-		SwitchComponents switcher = new SwitchComponents(homePanel);
-		
-		home.addActionListener(new SwitchComponentListener(homePanel, switcher));
-		graficos.addActionListener(new SwitchComponentListener(graficosPanel, switcher));
-		etl.addActionListener(new SwitchComponentListener(etlPanel, switcher));
-
+		setSwitchComponents();
 		
 	}
 
-	// Observadores
+	// Methodos Estruturais
+	public void setSwitchComponents() {
+		SwitchComponents switcher = new SwitchComponents(homePanel);		
+		home.addActionListener(new SwitchComponentListener(homePanel, switcher));
+		graficos.addActionListener(new SwitchComponentListener(graficosPanel, switcher));
+		etl.addActionListener(new SwitchComponentListener(etlPanel, switcher));
+		
+	}
 	
+	// Observadores
 	// Enviar o formulario do DBQueimadas para o servidor
 	private class UploadFormDBQueimadas implements ActionListener {
 

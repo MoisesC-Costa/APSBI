@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import server.factory.SecureTokenFactory;
 import server.model.bean.User;
 import server.model.jdbc.dao.UserDao;
-import server.model.jdbc.factory.UserFactory;
 import server.session.Session;
 
 public class LoginLogic implements Logic{
@@ -15,42 +14,43 @@ public class LoginLogic implements Logic{
 		JSONObject response = new JSONObject();
 		UserDao dao = new UserDao();
 
-		if (session.getToken() == null) {
-
-			// Recuperando o usuario da requisição
+		try {
+			
 			User user = new User();
+			
 			user.setEmail(packet.getString("email"));
 			user.setPassword(packet.getString("password"));
-
-			// Recuperando o usuari do banco de dados
-
-			User another = UserFactory.getUser(dao, packet.getString("email"));
-
-			// Comparando e vendo se os dados dão match
-			if (user.equals(another)) {
-				System.out.println("Usuario autenticado!");
-				String token = SecureTokenFactory.getUserToken();
+			
+			User test = dao.getUser(user.getEmail());
+			
+			// Impedindo que exista varias sessões para o mesmo usuario
+			if (Session.userActives.contains(user.getEmail())) {
+				response.put("code", false);
+				response.put("description", "Usuario já logado");
 				
+			} else if (test.equals(user)) {
+				//Usuario Logado com sucesso
 				response.put("code", true);
+				
+				String token = SecureTokenFactory.getUserToken();
+				session.setAutenticateAtributes(token, user);
+				
 				response.put("token", token);
 				
-				session.setToken(token);
-				session.response(response);
-
 			} else {
-				System.out.println("Usuario não Autenticado!");
-
+				// Caso as informações não correspondem
 				response.put("code", false);
-				response.put("description", "Usuario ou Senha invalidos");
-
-				session.response(response);
+				response.put("description", "Senha ou E-Mail invalidos");
+				
 			}
 			
-		} else {
-			throw new RuntimeException();
-
+			session.response(response);
+			
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+			
 		}
-
+		
 	}
 
 }

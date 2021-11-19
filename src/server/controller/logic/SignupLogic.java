@@ -30,7 +30,7 @@ public class SignupLogic implements Logic{
 			message.put("code", true);
 			message.put("token", token);
 			
-			session.setToken(token);
+			session.setAutenticateAtributes(token, user);
 			session.response(message);
 			
 		} catch(Exception e) {

@@ -1,4 +1,4 @@
-package server.threath;
+package server.thread;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,7 +22,7 @@ public class DBQueimadasUploader implements Runnable {
 	public void run() {
 
 		try  {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/ddHH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 
 			// Criando as ocorrencias e enviando elas para o banco de dados
@@ -32,7 +32,7 @@ public class DBQueimadasUploader implements Runnable {
 				Ocorrencia ocorrencia = new Ocorrencia();
 
 				Calendar date = Calendar.getInstance();
-				date.setTime(sdf.parse(row.getString(0).strip()));
+				date.setTime(sdf.parse(row.getString(0)));
 				
 				ocorrencia.setDataOcorrencia(date);
 				ocorrencia.setEstado(row.getString(3));
@@ -45,10 +45,12 @@ public class DBQueimadasUploader implements Runnable {
 				
 			}
 
+			System.out.println("Importação de Dados Finalizada");
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
+				
 	}
 	
 }

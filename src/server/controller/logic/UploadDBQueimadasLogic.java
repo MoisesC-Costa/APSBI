@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import server.model.jdbc.dao.OcorrenciaDao;
 import server.session.Session;
-import server.threath.DBQueimadasUploader;
+import server.thread.DBQueimadasUploader;
 
 public class UploadDBQueimadasLogic implements Logic {
 

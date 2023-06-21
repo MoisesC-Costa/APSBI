@@ -8,7 +8,7 @@ public class ConnectionFactory {
 	
 	public static Connection  getConnection() {
 		String user = "root";
-		String pass = "1234";
+		String pass = "root";
 		String url = "jdbc:mysql://localhost/db_ong";
 		
 		try {
